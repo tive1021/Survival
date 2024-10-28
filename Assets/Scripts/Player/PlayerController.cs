@@ -6,8 +6,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [HideInInspector]
-
     [Header("Movement")]
     public float moveSpeed;
     public float jumpPower;
@@ -23,8 +21,14 @@ public class PlayerController : MonoBehaviour
     private Vector2 mouseDelta;
     public bool canLook = true;
 
+    [Header("Dash")]
+    public float dashSpeed;
+    public float dashDuration;
+    public bool canDash = true;
+
     private Rigidbody _rigidbody;
     public Action inventory;
+    public Action setting;
 
     private void Awake()
     {
@@ -123,10 +127,41 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnSettingButton(InputAction.CallbackContext context)
+    {
+        if(context.phase == InputActionPhase.Started)
+        {
+            setting?.Invoke();
+            ToggleCursor();
+        }
+    }
+
     void ToggleCursor()
     {
         bool toggle = Cursor.lockState == CursorLockMode.Locked;
         Cursor.lockState = toggle ? CursorLockMode.None : CursorLockMode.Locked;
         canLook = !toggle;
+    }
+
+    public void OnDash(InputAction.CallbackContext context)
+    {
+        if(context.phase == InputActionPhase.Started && canDash)
+        {
+            StartCoroutine(DashCoroutine());
+        }
+    }
+
+    IEnumerator DashCoroutine()
+    {
+        float originalSpeed = moveSpeed;
+        moveSpeed *= dashSpeed;
+        canDash = false;
+
+        // 지정된 시간 동안 대시 유지
+        yield return new WaitForSeconds(dashDuration);
+
+        // 대시 종료: 속도를 원래대로 돌리고 대시 가능 여부를 다시 true로 설정
+        moveSpeed = originalSpeed;
+        canDash = true;
     }
 }
