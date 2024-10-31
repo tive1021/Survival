@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +11,16 @@ public class CampFire : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating("DealDamage", 0, damageRate);
+        StartCoroutine(DealDamageCoroutine());
+    }
+
+    private IEnumerator DealDamageCoroutine()
+    {
+        while (true) // 무한 반복
+        {
+            DealDamage();
+            yield return new WaitForSeconds(damageRate); // damageRate 초 동안 대기
+        }
     }
 
     void DealDamage()
@@ -20,6 +30,7 @@ public class CampFire : MonoBehaviour
             things[i].TakePhysicalDamage(damage);
         }
     }
+
 
     private void OnTriggerEnter(Collider other)
     {

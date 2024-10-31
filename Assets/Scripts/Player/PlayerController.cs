@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class PlayerController : MonoBehaviour
 {
@@ -163,5 +164,14 @@ public class PlayerController : MonoBehaviour
         // 대시 종료: 속도를 원래대로 돌리고 대시 가능 여부를 다시 true로 설정
         moveSpeed = originalSpeed;
         canDash = true;
+    }
+
+    public void OnSkill(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            CharacterManager.Instance.Player.condition.UseMana(30);
+            Debug.Log("스킬을 사용했습니다");
+        }
     }
 }

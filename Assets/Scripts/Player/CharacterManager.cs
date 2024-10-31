@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class CharacterManager : MonoBehaviour
         get { return player; }
         set { player = value; }
     }
-
+    
     private void Awake()
     {
         if(instance == null)
