@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,9 +16,17 @@ public class Interaction : MonoBehaviour
     public TextMeshProUGUI promptText;
     private Camera camera;
 
+    private Action<string> promptAction;
+
     void Start()
     {
         camera = Camera.main;
+
+        promptAction = (string message) =>
+        {
+            promptText.gameObject.SetActive(!string.IsNullOrEmpty(message));
+            promptText.text = message;
+        };
     }
 
     // Update is called once per frame
@@ -50,8 +59,10 @@ public class Interaction : MonoBehaviour
 
     private void SetPromptText()
     {
-        promptText.gameObject.SetActive(true);
-        promptText.text = curInteractable.GetInteractPrompt();
+        if (curInteractable != null)
+        {
+            promptAction?.Invoke(curInteractable.GetInteractPrompt());
+        }
     }
 
     public void OnInteractInput(InputAction.CallbackContext context)
